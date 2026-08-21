@@ -1,0 +1,149 @@
+/* =========================================================================
+   BIG MARGIN — Design Tokens
+   Institutional financial terminal identity. Dark-first, light supported.
+   ========================================================================= */
+
+:root {
+  /* ---- Brand ---- */
+  --bm-brand: #25d0a0;
+  --bm-brand-strong: #17b489;
+  --bm-brand-soft: rgba(37, 208, 160, 0.12);
+  --bm-gold: #e0b44a;
+  --bm-gold-soft: rgba(224, 180, 74, 0.12);
+  --bm-violet: #7c8cf8;
+  --bm-violet-soft: rgba(124, 140, 248, 0.14);
+
+  /* ---- Market semantics ---- */
+  --up: #16c784;
+  --up-soft: rgba(22, 199, 132, 0.13);
+  --down: #ea3943;
+  --down-soft: rgba(234, 57, 67, 0.13);
+  --flat: #8b97ad;
+  --flat-soft: rgba(139, 151, 173, 0.12);
+
+  /* ---- Status ---- */
+  --status-live: #16c784;
+  --status-delayed: #e0b44a;
+  --status-calculated: #7c8cf8;
+  --status-estimated: #d18a4a;
+  --status-unavailable: #7a8499;
+
+  /* ---- Radii ---- */
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+  --r-full: 999px;
+
+  /* ---- Spacing scale ---- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+
+  /* ---- Typography ---- */
+  --font-ar: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', system-ui, sans-serif;
+  --font-en: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Roboto Mono', ui-monospace, monospace;
+  --font-ui: var(--font-en);
+
+  --fs-2xs: 10px;
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-md: 13px;
+  --fs-base: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 19px;
+  --fs-2xl: 24px;
+  --fs-3xl: 32px;
+  --fs-4xl: 42px;
+  --fs-5xl: 58px;
+
+  /* ---- Layout ---- */
+  --sidebar-w: 244px;
+  --sidebar-w-collapsed: 68px;
+  --topbar-h: 56px;
+  --mobilenav-h: 62px;
+
+  /* ---- Motion ---- */
+  --t-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+  --t-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --t-slow: 340ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* =========================== DARK (default) =========================== */
+:root,
+:root[data-theme='dark'] {
+  --bg: #0b0e14;
+  --bg-deep: #070910;
+  --surface: #111621;
+  --surface-2: #161d2b;
+  --surface-3: #1c2434;
+  --surface-hover: #1a2231;
+  --border: rgba(255, 255, 255, 0.075);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --border-focus: var(--bm-brand);
+
+  --text: #e7ecf5;
+  --text-2: #9aa6bc;
+  --text-3: #6a7690;
+  --text-inverse: #0b0e14;
+
+  --grid-line: rgba(255, 255, 255, 0.055);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.55);
+  --scrim: rgba(4, 6, 11, 0.72);
+
+  color-scheme: dark;
+}
+
+/* ============================== LIGHT ================================= */
+:root[data-theme='light'] {
+  --bg: #f5f7fa;
+  --bg-deep: #eceff5;
+  --surface: #ffffff;
+  --surface-2: #f7f9fc;
+  --surface-3: #eef2f8;
+  --surface-hover: #f0f4f9;
+  --border: rgba(15, 23, 42, 0.1);
+  --border-strong: rgba(15, 23, 42, 0.18);
+
+  --text: #0e1524;
+  --text-2: #4a5771;
+  --text-3: #7a8699;
+  --text-inverse: #ffffff;
+
+  --up: #0d9a68;
+  --up-soft: rgba(13, 154, 104, 0.11);
+  --down: #d32431;
+  --down-soft: rgba(211, 36, 49, 0.1);
+  --bm-brand: #0f9c78;
+  --bm-brand-strong: #0b7f61;
+  --bm-brand-soft: rgba(15, 156, 120, 0.1);
+
+  --grid-line: rgba(15, 23, 42, 0.07);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 18px 48px rgba(15, 23, 42, 0.14);
+  --scrim: rgba(15, 23, 42, 0.4);
+
+  color-scheme: light;
+}
+
+/* ===================== Direction-aware helpers ======================== */
+:root[dir='rtl'] {
+  --font-ui: var(--font-ar);
+  --dir: -1;
+}
+:root[dir='ltr'] {
+  --font-ui: var(--font-en);
+  --dir: 1;
+}
