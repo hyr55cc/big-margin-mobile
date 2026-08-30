@@ -103,6 +103,20 @@ This is what renders the status chip next to every figure in the product.
 frontend never computes them. Index impact *is* derived, and every derived figure is
 labelled `Calculated` and exposes its formula in a tooltip.
 
+**4. News carries its event type.** `NewsItem.category` and `NewsItem.official` are what
+the importance rules run on, so send them when the upstream feed has them:
+
+```ts
+category: 'earnings' | 'dividend' | 'corporate_action' | 'capital' | 'mna'
+        | 'regulatory' | 'management' | 'guidance' | 'rating' | 'general' | null
+official: boolean | null        // exchange or regulator filing vs media article
+sourceImportance: 'critical' | 'important' | 'routine' | null
+```
+
+Send `null` rather than guessing. An unclassified story renders as *importance
+unavailable*, which is the honest outcome — the app never falls back to calling it
+routine. `sourceImportance` always wins over the rules when present.
+
 To add a third source, implement `MarketDataProvider` and register it in
 `src/data/registry.ts`. No page imports a dataset directly, so nothing else changes.
 
@@ -260,8 +274,23 @@ sliders, TASI Distribution (treemap / bar / donut, by stock or by sector), Secto
 drill-down.
 
 **Research** — Shariah screening with full ratio transparency and methodology pages, Smart
-Screener (17 filters, 8 presets), Rankings (10 boards), Compare (up to 5, indexed to 100),
-News.
+Screener (17 filters, 8 presets), Rankings (10 boards), Compare (up to 5, indexed to 100).
+
+**News** — a personalised feed with importance rating and notifications. Companies are
+followed explicitly, and by default everything held or watched flows in too; a mute
+overrides both, so a holding can be silenced without selling it. Per-company rules decide
+what is worth interrupting for (critical only / important and above / everything / off),
+and matching stories land in an in-app notification centre with an unread count in the
+topbar.
+
+Importance is computed from **what the feed states, never from how the headline is
+worded**: the event type, whether the company published it itself, whether it lands beside
+a scheduled event the app already knows about, and whether it is a broad sector piece.
+Every point is attributable — the tooltip lists the signals and the total. Two rules keep
+it honest: a story the feed did not classify reads *importance unavailable* rather than
+routine, and a provider's own rating is never overruled. Personal relevance is kept
+separate from importance: owning the share changes where a story sits in your feed, not
+how material the event is.
 
 **Events** — dividends with calculator, corporate actions, earnings calendar.
 

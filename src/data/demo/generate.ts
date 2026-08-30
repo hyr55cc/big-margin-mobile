@@ -25,6 +25,7 @@ import type {
   Fundamentals,
   Instrument,
   MarketId,
+  NewsCategory,
   NewsItem,
   Provenance,
   Quote,
@@ -859,13 +860,28 @@ export function buildEarnings(
  * mistaken for a real published story. A production provider supplies real
  * headlines with real source names and URLs; BIG MARGIN never composes one.
  */
-const NEWS_TEMPLATES: Array<{ ar: string; en: string }> = [
-  { ar: 'إفصاح دوري عن النتائج المالية للفترة', en: 'Periodic disclosure of financial results for the period' },
-  { ar: 'إعلان عن توصية مجلس الإدارة بتوزيع أرباح', en: 'Board recommendation on a dividend distribution announced' },
-  { ar: 'الإعلان عن توقيع عقد تشغيلي جديد', en: 'New operating contract signed and disclosed' },
-  { ar: 'تحديث بشأن الجمعية العامة غير العادية', en: 'Update regarding the extraordinary general assembly' },
-  { ar: 'إفصاح عن تطورات جوهرية في أعمال الشركة', en: 'Disclosure of material developments in company operations' },
-  { ar: 'إعلان عن نتائج التخصيص لطرح الأسهم', en: 'Announcement of allocation results for the share offering' },
+interface NewsTemplate {
+  ar: string;
+  en: string;
+  category: NewsCategory;
+  official: boolean;
+}
+
+/**
+ * Each template carries the category and disclosure flag a real feed would
+ * supply, so the importance rules are exercised across every branch — and one
+ * template deliberately leaves the category null (see buildNews) so the
+ * "unclassified ⇒ unavailable" path is visible in the demo too.
+ */
+const NEWS_TEMPLATES: NewsTemplate[] = [
+  { ar: 'إفصاح دوري عن النتائج المالية للفترة', en: 'Periodic disclosure of financial results for the period', category: 'earnings', official: true },
+  { ar: 'إعلان عن توصية مجلس الإدارة بتوزيع أرباح', en: 'Board recommendation on a dividend distribution announced', category: 'dividend', official: true },
+  { ar: 'الإعلان عن توقيع عقد تشغيلي جديد', en: 'New operating contract signed and disclosed', category: 'general', official: true },
+  { ar: 'تحديث بشأن الجمعية العامة غير العادية', en: 'Update regarding the extraordinary general assembly', category: 'corporate_action', official: true },
+  { ar: 'إفصاح عن تطورات جوهرية في أعمال الشركة', en: 'Disclosure of material developments in company operations', category: 'regulatory', official: true },
+  { ar: 'إعلان عن نتائج التخصيص لطرح الأسهم', en: 'Announcement of allocation results for the share offering', category: 'capital', official: true },
+  { ar: 'تقرير صحفي عن تغييرات في الإدارة التنفيذية', en: 'Press report on executive management changes', category: 'management', official: false },
+  { ar: 'مراجعة تصنيف ائتماني من وكالة تصنيف', en: 'Credit rating review published by a rating agency', category: 'rating', official: false },
 ];
 
 export function buildNews(refs: RefInstrument[], limit = 40): NewsItem[] {
@@ -892,6 +908,11 @@ export function buildNews(refs: RefInstrument[], limit = 40): NewsItem[] {
       publishedAt: published,
       symbols: [ref.symbol],
       market: ref.market,
+      // Every seventh item withholds its category, so the screen has to render
+      // the "importance unavailable" state rather than only the happy path.
+      category: i % 7 === 6 ? null : tpl.category,
+      official: i % 7 === 6 ? null : tpl.official,
+      sourceImportance: null,
       provenance: unavailableProvenance(
         'No news provider is connected. Placeholder items shown for layout only.',
       ),

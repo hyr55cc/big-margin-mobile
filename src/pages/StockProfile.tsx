@@ -25,6 +25,9 @@ import {
   V,
 } from '@/components/ui';
 import { ShariahPanel } from '@/components/market/ShariahPanel';
+import { CategoryChip, ImportanceChip } from '@/components/news/importance';
+import { rateImportance } from '@/lib/calc/newsImportance';
+import { toggleFollow, useNewsStore } from '@/store/news';
 const OptionsPanel = lazy(() =>
   import('@/components/options/OptionsPanel').then((m) => ({ default: m.OptionsPanel })),
 );
@@ -60,6 +63,7 @@ export default function StockProfile() {
   const { bySymbol, indexInfo, loading, methodologyId } = useMarket();
   const pf = usePortfolioSummary();
   const lists = useWatchlists((s) => s.lists);
+  const newsFollowed = useNewsStore((s) => s.followed).includes(symbol);
   const activeList = useWatchlists((s) => s.activeId);
 
   const [tab, setTab] = useState<Tab>('overview');
@@ -880,7 +884,26 @@ export default function StockProfile() {
       {/* ------------------------------ news ---------------------------- */}
       {tab === 'news' && (
         <Card>
-          <CardHead title={t('news.title')} icon="news" />
+          <CardHead
+            title={t('news.title')}
+            icon="news"
+            right={
+              <>
+                <Btn
+                  size="sm"
+                  variant={newsFollowed ? 'default' : 'ghost'}
+                  icon="bell"
+                  active={newsFollowed}
+                  onClick={() => toggleFollow(symbol)}
+                >
+                  {newsFollowed ? t('news.unfollow') : t('news.follow')}
+                </Btn>
+                <Btn size="sm" variant="ghost" onClick={() => navigate('/app/news')}>
+                  {t('g.viewAll')}
+                </Btn>
+              </>
+            }
+          />
           <div className="card-body stack stack-3">
             {events.loading && <Skeleton h={140} />}
             {events.data && events.data.news.length === 0 && (
@@ -895,7 +918,9 @@ export default function StockProfile() {
                 <span className="t-lg" style={{ fontWeight: 550, lineHeight: 1.5 }}>
                   {L(n.headline)}
                 </span>
-                <span className="row row-3 t-xs muted-3">
+                <span className="row row-3 row-wrap t-xs muted-3">
+                  <ImportanceChip result={rateImportance(n)} />
+                  <CategoryChip category={n.category} />
                   <span>{n.sourceName}</span>
                   <span>·</span>
                   <span>{fmt.relative(n.publishedAt)}</span>

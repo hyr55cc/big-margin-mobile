@@ -7,6 +7,7 @@ import { Icon, IconBtn, type IconName } from '@/components/ui';
 import { BrandMark } from '@/components/ui/Icon';
 import { GlobalSearch } from '@/components/market/GlobalSearch';
 import { MarketStatusPill } from '@/components/market/MarketStatusPill';
+import { unreadCount, useNewsStore } from '@/store/news';
 import type { MessageKey } from '@/i18n';
 
 interface NavEntry {
@@ -219,6 +220,8 @@ function Topbar({ onMenu, onToggleSidebar }: { onMenu: () => void; onToggleSideb
         <MarketStatusPill status={statuses.US} />
       </span>
 
+      <NewsBell />
+
       <IconBtn icon="refresh" onClick={refresh} title={t('g.lastUpdated')} active={loading} />
       <IconBtn
         icon="languages"
@@ -234,6 +237,33 @@ function Topbar({ onMenu, onToggleSidebar }: { onMenu: () => void; onToggleSideb
         <IconBtn icon="tv" onClick={() => navigate('/tv')} title={t('tv.enter')} />
       </span>
     </header>
+  );
+}
+
+/**
+ * Unread news notifications, and a way into them.
+ *
+ * The count is deliberately not shown when it is zero: a permanent "0" trains
+ * people to stop looking at the badge, which is the one thing it exists for.
+ */
+function NewsBell() {
+  const { t } = useI18n();
+  const navigate = useNavigate();
+  const unread = useNewsStore(unreadCount);
+  return (
+    <span className="bell">
+      <IconBtn
+        icon="bell"
+        onClick={() => navigate('/app/news')}
+        title={t('news.tab.alerts')}
+        active={unread > 0}
+      />
+      {unread > 0 && (
+        <span className="bell-count" aria-label={t('news.unread')}>
+          {unread > 99 ? '99+' : unread}
+        </span>
+      )}
+    </span>
   );
 }
 

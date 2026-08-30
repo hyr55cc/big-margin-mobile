@@ -318,6 +318,27 @@ export interface EarningsEvent {
   provenance: Provenance;
 }
 
+/**
+ * What kind of event a story reports. This drives the importance rules, so it
+ * is a *sourced* field: a provider that does not classify its feed leaves it
+ * null, and the item's importance then reads "unavailable" rather than being
+ * guessed from the wording of the headline.
+ */
+export type NewsCategory =
+  | 'earnings'
+  | 'dividend'
+  | 'corporate_action'
+  | 'capital'
+  | 'mna'
+  | 'regulatory'
+  | 'management'
+  | 'guidance'
+  | 'rating'
+  | 'general';
+
+/** How much a story matters. Three levels, because more are not actionable. */
+export type NewsImportance = 'critical' | 'important' | 'routine';
+
 export interface NewsItem {
   id: string;
   headline: Localized;
@@ -327,6 +348,17 @@ export interface NewsItem {
   publishedAt: string;
   symbols: string[];
   market: Maybe<MarketId>;
+  /** Event type, from the provider. Null when the feed does not classify. */
+  category: Maybe<NewsCategory>;
+  /**
+   * True for a filing published by the exchange or regulator (Tadawul, SEC),
+   * false for a media article, null when the provider does not say. An
+   * official disclosure is a fact the company published about itself, which is
+   * why it weighs more than coverage of it.
+   */
+  official: Maybe<boolean>;
+  /** The provider's own importance rating, when it supplies one. */
+  sourceImportance: Maybe<NewsImportance>;
   provenance: Provenance;
 }
 
