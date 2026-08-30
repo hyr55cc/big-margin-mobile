@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { Suspense, lazy, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useI18n } from '@/i18n';
 import { useAsync, useFmt } from '@/lib/hooks';
@@ -25,6 +25,9 @@ import {
   V,
 } from '@/components/ui';
 import { ShariahPanel } from '@/components/market/ShariahPanel';
+const OptionsPanel = lazy(() =>
+  import('@/components/options/OptionsPanel').then((m) => ({ default: m.OptionsPanel })),
+);
 import { TransactionModal } from '@/components/portfolio/TransactionModal';
 import { AlertModal } from '@/components/portfolio/AlertModal';
 import { LineChart, RangeMeter, seriesColor, useChartTheme } from '@/components/charts';
@@ -43,6 +46,7 @@ type Tab =
   | 'actions'
   | 'earnings'
   | 'news'
+  | 'options'
   | 'stats';
 
 const TIMEFRAMES: Timeframe[] = ['1D', '1W', '1M', '3M', '6M', '1Y', '5Y'];
@@ -167,6 +171,7 @@ export default function StockProfile() {
     { value: 'actions', label: t('stock.corporateActions') },
     { value: 'earnings', label: t('stock.earnings') },
     { value: 'news', label: t('stock.news') },
+    ...(row.market === 'US' ? [{ value: 'options' as Tab, label: t('opt.title') }] : []),
     { value: 'stats', label: t('stock.statistics') },
   ];
 
@@ -903,6 +908,18 @@ export default function StockProfile() {
             </Notice>
           </div>
         </Card>
+      )}
+
+      {/* ---------------------------- options --------------------------- */}
+      {tab === 'options' && (
+        <Suspense fallback={<Skeleton h={420} radius={16} />}>
+          <OptionsPanel
+            symbol={symbol}
+            spot={row.price}
+            currency={row.instrument.currency}
+            hasOptionsMarket={row.market === 'US'}
+          />
+        </Suspense>
       )}
 
       {/* --------------------------- statistics ------------------------- */}

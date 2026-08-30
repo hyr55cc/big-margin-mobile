@@ -106,6 +106,17 @@ To add a third source, implement `MarketDataProvider` and register it in
 
 ---
 
+### Options data
+
+Options are configured separately from equities (`VITE_OPTIONS_PROVIDER`), because they
+price separately and most equity tiers exclude them. Setting it to `off` hides the section
+entirely — the nav entry disappears and the profile tab is not rendered — which is the
+correct choice when no chain is licensed. Shipping an empty ladder would read as a quiet
+market rather than as absent data.
+
+Listed equity options are a US product. Tadawul lists no retail single-stock options, so
+`hasOptions` is false for every Saudi instrument and the tab never appears there.
+
 ## Index impact methodology
 
 TASI is a free-float market-capitalisation weighted index:
@@ -195,10 +206,12 @@ src/
     MarketContext   Joins market + index + Shariah + user data into MarketRow
     demo/           ⚠️ Synthetic generator + real company identity only
     live/           HTTP provider against the BIG MARGIN backend
+  data/options/     Separate OptionsDataProvider + per-expiry chain hooks
   lib/
     decimal.ts      Integer-scaled money arithmetic
     format.ts       Formatting; missing values render "—", never 0
     calc/           position · indexImpact · income
+                    blackScholes · options · optionStrategies
     portfolioMath   Ledger → positions → portfolio summary
   i18n/             ar (default, RTL) + en (LTR), fully keyed
   store/            Dependency-free selector store, localStorage-persisted
@@ -206,9 +219,10 @@ src/
     ui/             Card, DataTable, Badge, Modal, Tooltip, forms, states
     charts/         Dependency-free SVG: line, bar, donut, treemap, payoff
     market/         Columns, cells, search, Shariah panels
+    options/        Chain ladder, expiry rail, contract sheet, strategy builder
     portfolio/      Transaction and alert modals
     layout/         App shell, sidebar, topbar, mobile nav
-  pages/            34 routes, lazily loaded
+  pages/            35 routes, lazily loaded
   test/             Calculation engine suite
 ```
 
@@ -254,6 +268,24 @@ Shariah composition, index exposure), multiple watchlists, alert rules, and the 
 centre: average cost, profit/loss with payoff chart and scenario table, break-even, target
 price, target return, averaging simulator with what-if amounts, dividend, investment
 allocation.
+
+**Options** — a US-only section, reached from an Options tab on a US stock profile or
+from the standalone options desk at `/app/options`. Per expiry: the chain ladder (calls
+and puts mirrored around a centred strike column, ITM shading, spot marker row), an expiry
+rail split by weekly / monthly / quarterly / LEAPS with days to expiration, a contract
+inspector with the five Greeks, moneyness, the intrinsic/extrinsic split, break-even and
+probability ITM, chain charts (open interest, volume, IV and each Greek by strike, with
+max pain and put/call ratios), options flow and unusual activity where the feed supplies
+them, a strategy builder covering twelve named strategies plus custom leg combinations
+with an exact piecewise-linear payoff, and a contract watchlist.
+
+Two rules shape the whole section. **Greeks and implied volatility the feed omits are
+priced by BIG MARGIN** with Black–Scholes–Merton from the mid quote and labelled
+`calculated`; a vendor value is never overwritten, field by field. And **a missing premium
+is never treated as zero** — a position with an unquoted leg reports as unavailable rather
+than drawing a payoff line that flatters it. Implied volatility is solved by bisection
+rather than Newton–Raphson, because vega collapses for deep ITM and OTM contracts and
+Newton stalls exactly where the chain is widest.
 
 **Surfaces** — premium landing page, BIG MARGIN WALL (TV mode with auto-rotation and
 ticker), settings, account, admin (provider status, sync jobs, validation errors).

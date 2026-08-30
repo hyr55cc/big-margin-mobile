@@ -29,6 +29,7 @@ const AlertsPage = lazy(() => import('@/pages/Alerts'));
 const Calculators = lazy(() => import('@/pages/Calculators'));
 const CalculatorPage = lazy(() => import('@/pages/CalculatorPage'));
 const News = lazy(() => import('@/pages/News'));
+const OptionsPage = lazy(() => import('@/pages/Options'));
 const StockProfile = lazy(() => import('@/pages/StockProfile'));
 const Settings = lazy(() => import('@/pages/Settings'));
 const Account = lazy(() => import('@/pages/Account'));
@@ -100,6 +101,7 @@ export default function App() {
                 <Route path="calculators" element={<Calculators />} />
                 <Route path="calculators/:tool" element={<CalculatorPage />} />
                 <Route path="news" element={<News />} />
+                <Route path="options" element={<OptionsPage />} />
                 <Route path="stock/:symbol" element={<StockProfile />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="account" element={<Account />} />

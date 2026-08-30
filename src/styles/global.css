@@ -1442,3 +1442,393 @@ table.dt .sort-caret.on { opacity: 1; color: var(--bm-brand); }
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .clickable { cursor: pointer; }
 .pill-list { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+
+/* =========================================================================
+   OPTIONS
+   The chain is the densest surface in the product. Two layout modes:
+   both sides on a wide screen with the strike ladder down the centre, and a
+   single side on a narrow one with the strike frozen at the leading edge —
+   which is how trading apps solve it, because a centre column cannot be made
+   sticky in a horizontally scrolling table.
+   ========================================================================= */
+
+.opt-shell { display: flex; flex-direction: column; gap: var(--s-4); }
+
+/* ----------------------------- expiry rail ----------------------------- */
+
+.exp-rail {
+  display: flex;
+  gap: var(--s-2);
+  overflow-x: auto;
+  padding: var(--s-1) var(--s-1) var(--s-3);
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+.exp-rail::-webkit-scrollbar { display: none; }
+
+.exp-chip {
+  flex: none;
+  min-width: 92px;
+  padding: 9px var(--s-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color var(--t-fast), background var(--t-fast);
+  scroll-snap-align: start;
+}
+.exp-chip:hover { border-color: var(--border-strong); }
+.exp-chip.on {
+  border-color: var(--bm-brand);
+  background: var(--bm-brand-soft);
+}
+/* No forced LTR here: these are Arabic phrases with numbers in them, not bare
+   numeric runs, and flipping the whole span puts the year where the day
+   belongs. Only the digits are isolated, via .num on the number itself. */
+.exp-chip .d {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.exp-chip.on .d { color: var(--bm-brand); }
+.exp-chip .dte {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--text-3);
+  margin-top: 2px;
+}
+.exp-chip .kind {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-top: 3px;
+}
+
+/* ------------------------------- chain --------------------------------- */
+
+.chain-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+table.chain {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-sm);
+  min-width: max-content;
+  direction: ltr;
+}
+
+table.chain thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--surface-2);
+  color: var(--text-3);
+  font-family: var(--font-ui);
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  text-align: right;
+  cursor: default;
+}
+table.chain thead th.side-head {
+  text-align: center;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.14em;
+  padding-top: 10px;
+}
+table.chain thead th.side-call { color: var(--bm-brand); }
+table.chain thead th.side-put { color: var(--bm-violet); }
+
+table.chain tbody td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  text-align: right;
+}
+table.chain tbody tr:hover td { background: var(--surface-hover); }
+table.chain tbody tr.clickable { cursor: pointer; }
+
+/* The strike ladder: frozen at the leading edge in single-side mode, and a
+   raised centre rail when both sides are shown. */
+.chain td.strike,
+.chain th.strike {
+  font-weight: 700;
+  text-align: center;
+  background: var(--surface-3);
+  border-inline: 1px solid var(--border);
+  color: var(--text);
+  z-index: 2;
+  min-width: 74px;
+}
+.chain.single td.strike,
+.chain.single th.strike {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+}
+:root[dir='rtl'] .chain.single td.strike,
+:root[dir='rtl'] .chain.single th.strike {
+  left: auto;
+  right: 0;
+}
+
+/* In-the-money shading is the chain's primary orientation cue. */
+.chain td.itm { background: color-mix(in srgb, var(--bm-brand) 9%, transparent); }
+.chain tr:hover td.itm { background: color-mix(in srgb, var(--bm-brand) 15%, transparent); }
+.chain td.itm-put { background: color-mix(in srgb, var(--bm-violet) 9%, transparent); }
+.chain tr:hover td.itm-put { background: color-mix(in srgb, var(--bm-violet) 15%, transparent); }
+
+/* The row nearest the underlying price anchors the eye. */
+.chain tr.atm td { box-shadow: inset 0 1px 0 var(--bm-gold), inset 0 -1px 0 var(--bm-gold); }
+.chain tr.atm td.strike { background: var(--bm-gold-soft); color: var(--bm-gold); }
+
+.chain .spot-row td {
+  background: var(--bg-deep);
+  padding: 5px 10px;
+  font-family: var(--font-ui);
+  font-size: var(--fs-xs);
+  color: var(--bm-gold);
+  text-align: center;
+  letter-spacing: 0.05em;
+  border-block: 1px solid var(--bm-gold-soft);
+}
+
+.chain .muted-cell { color: var(--text-3); }
+.chain .na { color: var(--text-3); opacity: 0.55; }
+
+/* --------------------------- contract sheet ---------------------------- */
+
+.sheet-scrim {
+  position: fixed;
+  inset: 0;
+  background: var(--scrim);
+  backdrop-filter: blur(3px);
+  z-index: 110;
+  display: flex;
+  animation: bm-fade var(--t-base);
+}
+.sheet {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Desktop: a right-hand inspector that does not cover the chain. */
+  margin-inline-start: auto;
+  width: min(560px, 100%);
+  height: 100%;
+  border-radius: 0;
+  animation: bm-slide-in var(--t-slow);
+}
+@keyframes bm-slide-in {
+  from { transform: translateX(calc(24px * var(--dir, 1))); opacity: 0; }
+}
+@media (max-width: 720px) {
+  .sheet-scrim { align-items: flex-end; }
+  .sheet {
+    width: 100%;
+    height: auto;
+    max-height: 92vh;
+    margin-inline-start: 0;
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    animation: bm-sheet-up var(--t-slow);
+  }
+  @keyframes bm-sheet-up {
+    from { transform: translateY(28px); opacity: 0; }
+  }
+  .sheet-grab {
+    width: 38px;
+    height: 4px;
+    border-radius: var(--r-full);
+    background: var(--border-strong);
+    margin: 9px auto 0;
+    flex: none;
+  }
+}
+.sheet-head {
+  padding: var(--s-4) var(--s-5);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-3);
+  flex: none;
+}
+.sheet-body { padding: var(--s-5); overflow-y: auto; flex: 1; }
+.sheet-foot {
+  padding: var(--s-3) var(--s-5);
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+  display: flex;
+  gap: var(--s-2);
+  flex: none;
+  flex-wrap: wrap;
+}
+
+/* ------------------------------- greeks -------------------------------- */
+
+.greek-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+.greek {
+  background: var(--surface);
+  padding: var(--s-3);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.greek .g-name {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.greek .g-val {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* --------------------------- moneyness meter --------------------------- */
+
+.mny-bar {
+  display: flex;
+  height: 30px;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.mny-bar > div {
+  display: grid;
+  place-items: center;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: #fff;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  direction: ltr;
+}
+.mny-intrinsic { background: var(--bm-brand-strong); }
+.mny-extrinsic { background: var(--bm-violet); }
+
+/* ------------------------------- legs ---------------------------------- */
+
+.leg-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  align-items: flex-end;
+  padding: var(--s-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+}
+.leg-badge {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--r-xs);
+  direction: ltr;
+}
+.leg-long { background: var(--up-soft); color: var(--up); }
+.leg-short { background: var(--down-soft); color: var(--down); }
+
+/* ------------------------------- flow ---------------------------------- */
+
+.flow-kind {
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--r-xs);
+}
+.flow-sweep { background: var(--bm-gold-soft); color: var(--bm-gold); }
+.flow-block { background: var(--bm-violet-soft); color: var(--bm-violet); }
+.flow-split { background: var(--surface-3); color: var(--text-2); }
+.flow-standard { background: transparent; color: var(--text-3); }
+
+/* A premium bar makes the size of a print readable without reading digits. */
+.prem-bar {
+  position: relative;
+  height: 4px;
+  border-radius: var(--r-full);
+  background: var(--surface-3);
+  min-width: 48px;
+  overflow: hidden;
+}
+.prem-bar > i { position: absolute; inset-block: 0; inset-inline-start: 0; border-radius: var(--r-full); }
+
+/* ------------------------- options filter grid ------------------------ */
+
+.filter-grid {
+  display: grid;
+  gap: var(--s-3) var(--s-4);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+@media (max-width: 720px) {
+  .filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* A disclosure rather than a permanent block: the ladder stays above fold. */
+.opt-disclosure { border-top: 1px solid var(--border); }
+.opt-disclosure > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: var(--s-3) var(--s-4);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.opt-disclosure > summary::-webkit-details-marker { display: none; }
+.opt-disclosure > summary::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-inline-end: 1.5px solid currentColor;
+  border-block-end: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  margin-inline-start: auto;
+  transition: transform var(--t-fast);
+}
+.opt-disclosure[open] > summary::after { transform: rotate(-135deg); }
+.opt-disclosure > summary:hover { color: var(--text); background: var(--surface-2); }
+.opt-disclosure .filter-grid { padding: 0 var(--s-4) var(--s-4); }
+
+/* The underlying strip that anchors every options screen. */
+.opt-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3) var(--s-5);
+}

@@ -43,6 +43,11 @@ const NAV_GROUPS: Array<{ label: MessageKey; items: NavEntry[] }> = [
       { to: '/app/rankings', icon: 'trophy', key: 'nav.rankings' },
       { to: '/app/compare', icon: 'compare', key: 'nav.compare' },
       { to: '/app/news', icon: 'news', key: 'nav.news' },
+      // Read straight from the env rather than the options registry, so the
+      // shell does not pull an options provider into the main bundle.
+      ...(import.meta.env.VITE_OPTIONS_PROVIDER === 'off'
+        ? []
+        : [{ to: '/app/options', icon: 'target', key: 'nav.options' } as NavEntry]),
     ],
   },
   {
