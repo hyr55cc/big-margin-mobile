@@ -46,6 +46,8 @@ Connect a real provider (below) before the product is used for anything.
 
 ---
 
+Deployment, including the SPA rewrite every host needs, is in **[DEPLOY.md](DEPLOY.md)**.
+
 ## Getting started
 
 ```bash
@@ -301,8 +303,15 @@ deployment needs a Node + TypeScript + PostgreSQL service that:
 - provides auth, rate limiting and caching;
 - holds every vendor credential — none belong in this bundle.
 
-Also pending: service worker for offline PWA behaviour, push delivery for alerts, and
-packaging for Android TV / webOS (the wall mode is already resolution-independent).
+Also pending: push delivery for alerts, and packaging for Android TV / webOS (the wall
+mode is already resolution-independent).
+
+**No service worker, deliberately.** The web app manifest, icons and iOS metadata are in
+place, so the app installs to a home screen and runs standalone. What it does not do is
+cache market data for offline reading. A stale quote served from a cache has no honest
+provenance — it is neither live, delayed, nor calculated, and the whole product rests on
+every figure knowing what it is. An app-shell-only service worker could be added without
+touching that, but caching responses could not.
 
 ---
 

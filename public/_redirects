@@ -1,0 +1,4 @@
+# Netlify / Cloudflare Pages SPA fallback.
+# BIG MARGIN routes on the client, so every path must serve index.html or a
+# refresh on /app/options — or any shared deep link — returns a 404.
+/*  /index.html  200

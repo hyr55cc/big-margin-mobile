@@ -8,7 +8,9 @@ dist-ssr
 coverage
 *.log
 .vite
-smoke.mjs
+# Scratch scripts used for local browser checks
+*.mjs
+!*.config.mjs
 
 # Release archives built from this working tree
 *.tar.gz

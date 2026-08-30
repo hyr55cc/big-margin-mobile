@@ -1,14 +1,41 @@
 {
-  "name": "BIG MARGIN",
+  "id": "/app",
+  "name": "BIG MARGIN — افهم السوق. قِس التأثير.",
   "short_name": "BIG MARGIN",
-  "description": "Understand the Market. Measure the Impact.",
-  "start_url": "/",
+  "description": "منصة تحليل الأسهم السعودية والأمريكية: أوزان تاسي وقياس التأثير، والتوافق الشرعي، والفلترة الذكية، وإدارة المحفظة.",
+  "start_url": "/app",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#0B0E14",
   "theme_color": "#0B0E14",
   "lang": "ar",
   "dir": "rtl",
+  "categories": ["finance", "business", "productivity"],
   "icons": [
-    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    {
+      "name": "المحفظة",
+      "short_name": "المحفظة",
+      "url": "/app/portfolio",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "تأثير تاسي",
+      "short_name": "التأثير",
+      "url": "/app/tasi/impact",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "قائمة المتابعة",
+      "short_name": "المتابعة",
+      "url": "/app/watchlist",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
   ]
 }
